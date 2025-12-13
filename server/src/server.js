@@ -4,16 +4,25 @@ const cors = require('cors');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const mongoSanitize = require('express-mongo-sanitize');
+const http = require('http');
+const { Server } = require('socket.io');
 
 // Import configurations
 const config = require('./config/index.config');
 const connectDB = require('./config/database.config');
 const routes = require('./routes/index.routes');
-const { globalErrorHandler, notFoundHandler } = require('./middleware/errorHandler');
+const { globalErrorHandler, notFoundHandler } = require('./middleware/error.middleware');
 const AppError = require('./utils/appError');
 
 // Initialize Express app
 const app = express();
+const server = http.createServer(app);
+const io = new Server(server);
+
+// Initialize WebSocket
+io.on('connection', (socket) => {
+
+});
 
 // ============================================
 // Database Connection
