@@ -1,7 +1,15 @@
+/**
+ * User Model
+ *
+ * Roles:
+ * - user: Regular users
+ * - admin: Platform administrators
+ */
+
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 
-const studentSchema = new mongoose.Schema({
+const userSchema = new mongoose.Schema({
   email: {
     type: String,
     required: [true, 'Email is required'],
@@ -30,41 +38,49 @@ const studentSchema = new mongoose.Schema({
     minlength: [2, 'Name must be at least 2 characters long'],
     maxlength: [100, 'Name cannot exceed 100 characters']
   },
-  avatar: {
-    type: String,
-    trim: true,
-    validate: {
-      validator: function(url) {
-        if (!url) return true;
-        return /^https?:\/\/.+/.test(url);
-      },
-      message: 'Avatar must be a valid URL'
-    }
-  },
   bio: {
     type: String,
     default: '',
     maxlength: [500, 'Bio cannot exceed 500 characters']
+  },
+  role: {
+    type: String,
+    enum: {
+      values: ['user', 'admin'],
+      message: 'Role must be either user or admin'
+    },
+    default: 'user'
+  },
+  isActive: {
+    type: Boolean,
+    default: true
   }
 }, {
   timestamps: true
 });
 
-studentSchema.pre('save', async function(next) {
+userSchema.index({ email: 1 });
+userSchema.index({ role: 1 });
+
+userSchema.pre('save', async function(next) {
   if (!this.isModified('passwordHash') || !this.passwordHash) return next();
   this.passwordHash = await bcrypt.hash(this.passwordHash, 10);
   next();
 });
 
-studentSchema.methods.verifyPassword = async function(password) {
+userSchema.methods.verifyPassword = async function(password) {
   return await bcrypt.compare(password, this.passwordHash);
 };
 
-studentSchema.methods.toJSON = function() {
+userSchema.methods.toJSON = function() {
   const obj = this.toObject();
   delete obj.passwordHash;
   delete obj.__v;
   return obj;
 };
 
-module.exports = mongoose.model('Student', studentSchema);
+userSchema.methods.isAdmin = function() {
+  return this.role === 'admin';
+};
+
+module.exports = mongoose.model('User', userSchema);
