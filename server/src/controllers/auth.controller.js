@@ -1,281 +1,152 @@
-const Student = require('../models/student.model');
-const University = require('../models/university.model');
-const { generateToken } = require('../utils/jwt');
-const {
-  getGoogleAuthUrlStudent,
-  getGoogleAuthUrlUniversity,
-  getGoogleUserInfo
-} = require('../utils/googleAuth');
+/**
+ * Auth Controller
+ *
+ * Handles user authentication.
+ */
+
+const User = require('../models/user.model');
+const { getGoogleAuthUrl, getGoogleUserInfo } = require('../utils/googleAuth');
+const { sendTokenCookie, sendUserResponse } = require('../utils/sendToken');
 const config = require('../config/index.config');
 const catchAsync = require('../utils/catchAsync');
 const AppError = require('../utils/appError');
 
-// Standard Login for Students
-exports.studentLogin = catchAsync(async (req, res, next) => {
-  const { email, password } = req.body;
-
-  if (!email || !password) {
-    return next(new AppError('Please provide email and password', 400));
-  }
-
-  const student = await Student.findOne({ email });
-  if (!student || !student.passwordHash) {
-    return next(new AppError('Invalid credentials', 401));
-  }
-
-  const isValid = await student.verifyPassword(password);
-  if (!isValid) {
-    return next(new AppError('Invalid credentials', 401));
-  }
-
-  const token = generateToken({ id: student._id, type: 'student' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-  res.json({
-    success: true,
-    student
-  });
-});
-
-// Standard Signup for Students
-exports.studentSignup = catchAsync(async (req, res, next) => {
+/**
+ * User signup with email/password
+ */
+exports.signup = catchAsync(async (req, res, next) => {
   const { email, password, name } = req.body;
 
   if (!email || !password || !name) {
     return next(new AppError('Please provide email, password, and name', 400));
   }
 
-  const existing = await Student.findOne({ email });
-  if (existing) {
+  const existingUser = await User.findOne({ email });
+  if (existingUser) {
     return next(new AppError('Email already exists', 400));
   }
 
-  const student = await Student.create({ email, passwordHash: password, name });
-
-  const token = generateToken({ id: student._id, type: 'student' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-  res.status(201).json({
-    success: true,
-    student
+  const user = await User.create({
+    email,
+    passwordHash: password,
+    name
   });
+
+  sendUserResponse(res, user, 201);
 });
 
-// Standard Login for Universities
-exports.universityLogin = catchAsync(async (req, res, next) => {
+/**
+ * User login with email/password
+ */
+exports.login = catchAsync(async (req, res, next) => {
   const { email, password } = req.body;
 
   if (!email || !password) {
     return next(new AppError('Please provide email and password', 400));
   }
 
-  const university = await University.findOne({ email });
-  if (!university || !university.passwordHash) {
+  const user = await User.findOne({ email });
+  if (!user || !user.passwordHash) {
     return next(new AppError('Invalid credentials', 401));
   }
 
-  const isValid = await university.verifyPassword(password);
+  if (!user.isActive) {
+    return next(new AppError('Account is deactivated', 401));
+  }
+
+  const isValid = await user.verifyPassword(password);
   if (!isValid) {
     return next(new AppError('Invalid credentials', 401));
   }
 
-  const token = generateToken({ id: university._id, type: 'university' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-  res.json({
-    success: true,
-    university
-  });
-});
-
-// Standard Signup for Universities
-exports.universitySignup = catchAsync(async (req, res, next) => {
-  const { email, password, name } = req.body;
-
-  if (!email || !password || !name) {
-    return next(new AppError('Please provide email, password, and name', 400));
-  }
-
-  const existing = await University.findOne({ email });
-  if (existing) {
-    return next(new AppError('Email already exists', 400));
-  }
-
-  const university = await University.create({ email, passwordHash: password, name });
-
-  const token = generateToken({ id: university._id, type: 'university' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-  res.status(201).json({
-    success: true,
-    university
-  });
+  sendUserResponse(res, user);
 });
 
 /**
- * Redirect to Google OAuth for Student Login
- * @route   GET /api/v1/auth/google/student
+ * Google OAuth redirect
  */
-exports.googleStudentRedirect = (req, res) => {
-  const authUrl = getGoogleAuthUrlStudent();
+exports.googleRedirect = (req, res) => {
+  const authUrl = getGoogleAuthUrl();
   res.redirect(authUrl);
 };
 
 /**
- * Handle Google OAuth Callback for Student
- * @route   GET /api/v1/auth/google/student/callback
+ * Google OAuth callback
  */
-exports.googleStudentCallback = catchAsync(async (req, res, next) => {
+exports.googleCallback = catchAsync(async (req, res, next) => {
   const { code } = req.query;
 
   if (!code) {
     return next(new AppError('Authorization code not provided', 400));
   }
 
-  // Get user info from Google
-  const googleUser = await getGoogleUserInfo(code, config.google.studentCallbackUrl);
+  const googleUser = await getGoogleUserInfo(code, config.google.callbackUrl);
 
-  // Find or create student
-  let student = await Student.findOne({ email: googleUser.email });
+  let user = await User.findOne({ email: googleUser.email });
 
-  if (!student) {
-    student = await Student.create({
+  if (!user) {
+    user = await User.create({
       googleId: googleUser.googleId,
       email: googleUser.email,
-      name: googleUser.name,
-      avatar: googleUser.avatar
+      name: googleUser.name
     });
-  } else if (!student.googleId) {
-    student.googleId = googleUser.googleId;
-    student.avatar = googleUser.avatar;
-    await student.save();
+  } else if (!user.googleId) {
+    user.googleId = googleUser.googleId;
+    await user.save();
   }
 
-  // Generate JWT token
-  const token = generateToken({ id: student._id, type: 'student' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
+  if (!user.isActive) {
+    return res.redirect(`${config.frontendUrl}/login?error=account_deactivated`);
+  }
 
-  // Redirect to frontend
-  res.redirect(`${config.frontendUrl}/student/dashboard`);
+  sendTokenCookie(res, {
+    id: user._id,
+    accountType: 'user',
+    role: user.role
+  });
+
+  res.redirect(`${config.frontendUrl}/dashboard`);
 });
 
 /**
- * Redirect to Google OAuth for University Login
- * @route   GET /api/v1/auth/google/university
+ * Logout
  */
-exports.googleUniversityRedirect = (req, res) => {
-  const authUrl = getGoogleAuthUrlUniversity();
-  res.redirect(authUrl);
-};
-
-/**
- * Handle Google OAuth Callback for University
- * @route   GET /api/v1/auth/google/university/callback
- */
-exports.googleUniversityCallback = catchAsync(async (req, res, next) => {
-  const { code } = req.query;
-
-  if (!code) {
-    return next(new AppError('Authorization code not provided', 400));
-  }
-
-  // Get user info from Google
-  const googleUser = await getGoogleUserInfo(code, config.google.universityCallbackUrl);
-
-  // Find or create university
-  let university = await University.findOne({ email: googleUser.email });
-
-  if (!university) {
-    university = await University.create({
-      googleId: googleUser.googleId,
-      email: googleUser.email,
-      name: googleUser.name,
-      logo: googleUser.avatar
-    });
-  } else if (!university.googleId) {
-    university.googleId = googleUser.googleId;
-    university.logo = googleUser.avatar;
-    await university.save();
-  }
-
-  // Generate JWT token
-  const token = generateToken({ id: university._id, type: 'university' });
-  res.cookie('token', token, { httpOnly: true, maxAge: 7 * 24 * 60 * 60 * 1000 });
-
-  // Redirect to frontend
-  res.redirect(`${config.frontendUrl}/university/dashboard`);
-});
-
-// Logout
 exports.logout = (req, res) => {
   res.clearCookie('token');
   res.json({
     success: true,
-    message: 'Logged out'
+    message: 'Logged out successfully'
   });
 };
 
-// Get Current User
+/**
+ * Get current user
+ */
 exports.me = (req, res) => {
   res.json({
     success: true,
-    user: req.user,
-    type: req.userType
+    user: req.user
   });
 };
 
-// Update Student Profile
-exports.updateStudentProfile = catchAsync(async (req, res, next) => {
+/**
+ * Update user profile
+ */
+exports.updateProfile = catchAsync(async (req, res, next) => {
   const { name, bio } = req.body;
 
-  // Get the student
-  const student = await Student.findById(req.user._id);
-
-  if (!student) {
-    return next(new AppError('Student not found', 404));
+  const user = await User.findById(req.user._id);
+  if (!user) {
+    return next(new AppError('User not found', 404));
   }
 
-  // Update fields
-  if (name) student.name = name;
-  if (bio !== undefined) student.bio = bio;
+  if (name) user.name = name;
+  if (bio !== undefined) user.bio = bio;
 
-  // Handle avatar upload if provided
-  if (req.file) {
-    student.avatar = req.file.path; // Cloudinary URL
-  }
-
-  await student.save();
+  await user.save();
 
   res.json({
     success: true,
-    student
-  });
-});
-
-// Update University Profile
-exports.updateUniversityProfile = catchAsync(async (req, res, next) => {
-  const { name, bio } = req.body;
-
-  // Get the university
-  const university = await University.findById(req.user._id);
-
-  if (!university) {
-    return next(new AppError('University not found', 404));
-  }
-
-  // Update fields
-  if (name) university.name = name;
-  if (bio !== undefined) university.bio = bio;
-
-  // Handle logo upload if provided
-  if (req.file) {
-    university.logo = req.file.path; // Cloudinary URL
-  }
-
-  await university.save();
-
-  res.json({
-    success: true,
-    university
+    user
   });
 });

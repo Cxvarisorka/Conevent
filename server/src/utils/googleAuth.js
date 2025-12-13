@@ -7,10 +7,10 @@ const client = new OAuth2Client(
 );
 
 /**
- * Generate Google OAuth URL for student login
+ * Generate Google OAuth URL for user login
  * @returns {string} - Google OAuth authorization URL
  */
-exports.getGoogleAuthUrlStudent = () => {
+exports.getGoogleAuthUrl = () => {
   const scopes = [
     'https://www.googleapis.com/auth/userinfo.profile',
     'https://www.googleapis.com/auth/userinfo.email'
@@ -19,24 +19,7 @@ exports.getGoogleAuthUrlStudent = () => {
   return client.generateAuthUrl({
     access_type: 'offline',
     scope: scopes,
-    redirect_uri: config.google.studentCallbackUrl
-  });
-};
-
-/**
- * Generate Google OAuth URL for university login
- * @returns {string} - Google OAuth authorization URL
- */
-exports.getGoogleAuthUrlUniversity = () => {
-  const scopes = [
-    'https://www.googleapis.com/auth/userinfo.profile',
-    'https://www.googleapis.com/auth/userinfo.email'
-  ];
-
-  return client.generateAuthUrl({
-    access_type: 'offline',
-    scope: scopes,
-    redirect_uri: config.google.universityCallbackUrl
+    redirect_uri: config.google.callbackUrl
   });
 };
 
