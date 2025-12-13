@@ -2,6 +2,7 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router";
 import ProtectRouter from "./components/protected-route";
 import { LoginForm } from "./components/login-form";
 import NavigationLayout from "./components/navigation-layout";
+import { RegisterForm } from "./components/register-form";
 
 export const layout = createBrowserRouter([
   {
@@ -14,9 +15,25 @@ export const layout = createBrowserRouter([
             <LoginForm />
           </div>
         ),
+
         children: [
           {
             path: "/login/*",
+            element: <Outlet />,
+          },
+        ],
+      },
+      {
+        path: "/register",
+        element: (
+          <div className="md:max-w-base-400 w-full">
+            <RegisterForm />
+          </div>
+        ),
+
+        children: [
+          {
+            path: "/register/*",
             element: <Outlet />,
           },
         ],

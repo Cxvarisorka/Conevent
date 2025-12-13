@@ -9,70 +9,85 @@ import {
 } from "@/components/ui/field";
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
-import { loginConstant } from "@/constants";
+import { registerConstant } from "@/constants";
 
-export function LoginForm({
+export function RegisterForm({
   className,
   ...props
 }: React.ComponentProps<"div">) {
-  const [userInfo, setUserInfo] = useState<{
-    email: string;
-    password: string;
-  }>({
+  const [userInfo, setUserInfo] = useState({
     email: "",
     password: "",
+    confirmPassword: "",
   });
   // ! AUTH
-  const handleLogin = () => {
-    console.log(userInfo)
+  const handleRegister = () => {
+    if (userInfo.password !== userInfo.confirmPassword) {
+      alert("Passwords do not match");
+      return;
+    }
+    console.log(userInfo);
   };
   return (
-    <div className="flex items-center justify-center h-screen max-w-130  mx-auto ">
+    <div className="flex items-center justify-center h-screen max-w-130 mx-auto ">
       <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
         <Card className="overflow-hidden p-0">
           <CardContent className="grid p-0">
-            <form className="p-6 md:p-8">
+            <form className="p-6 md:p-8" onSubmit={(e) => { e.preventDefault(); handleRegister(); }}>
               <FieldGroup>
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <h1 className="text-2xl font-bold">{loginConstant.heading1}</h1>
+                  <h1 className="text-2xl font-bold">{registerConstant.heading1}</h1>
                 </div>
                 <Field>
                   <Input
                     id="email"
                     type="email"
                     value={userInfo.email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    onChange={(e) =>
                       setUserInfo({
                         ...userInfo,
                         email: e.target.value,
                       })
                     }
-                    placeholder={loginConstant.email}
+                    placeholder={registerConstant.email}
                     required
                   />
                 </Field>
                 <Field>
                   <Input
-                    value={userInfo.email}
-                    onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                    value={userInfo.password}
+                    onChange={(e) =>
                       setUserInfo({
                         ...userInfo,
                         password: e.target.value,
                       })
                     }
-                    placeholder={loginConstant.passwd}
+                    placeholder={registerConstant.passwd}
                     id="password"
                     type="password"
                     required
                   />
                 </Field>
                 <Field>
-                  <Button onClick={() => handleLogin()} type="submit">
-                    {loginConstant.logIn}
-                  </Button>
+                  <Input
+                    value={userInfo.confirmPassword}
+                    onChange={(e) =>
+                      setUserInfo({
+                        ...userInfo,
+                        confirmPassword: e.target.value,
+                      })
+                    }
+                    placeholder={registerConstant.confirmPasswd}
+                    id="confirmPassword"
+                    type="password"
+                    required
+                  />
+                </Field>
+                <Field>
+                  <Button type="submit">{registerConstant.signUp}</Button>
                 </Field>
                 <FieldSeparator className="*:data-[slot=field-separator-content]:bg-card">
-                  {loginConstant.or}
+                  {registerConstant.or}
                 </FieldSeparator>
                 <Field className="grid grid-cols-1">
                   <Button variant="outline" type="button">
@@ -82,21 +97,17 @@ export function LoginForm({
                         fill="currentColor"
                       />
                     </svg>
-                    <span className="sr-only">Login with Google</span>
+                    <span className="sr-only">Sign up with Google</span>
                   </Button>
                 </Field>
                 <FieldDescription className="text-center">
-                  {loginConstant.signUpIntro} <a href="/register">{loginConstant.signUp}</a>
+                  {registerConstant.signInIntro}{" "}
+                  <a href="/login">{registerConstant.signIn}</a>
                 </FieldDescription>
               </FieldGroup>
             </form>
           </CardContent>
         </Card>
-        {/* // !  */}
-        {/* <FieldDescription className="px-6 text-center">
-          By clicking continue, you agree to our{" "}
-          <a href="#">Terms of Service</a> and <a href="#">Privacy Policy</a>.
-        </FieldDescription> */}
       </div>
     </div>
   );
