@@ -74,40 +74,61 @@ exports.googleRedirect = (req, res) => {
  * Google OAuth callback
  */
 exports.googleCallback = catchAsync(async (req, res, next) => {
-  const { code } = req.query;
+  const { code, error } = req.query;
+
+  // Handle Google OAuth errors
+  if (error) {
+    console.error('Google OAuth error:', error);
+    return res.redirect(`${config.frontendUrl}/login?error=google_oauth_failed`);
+  }
 
   if (!code) {
-    return next(new AppError('Authorization code not provided', 400));
+    return res.redirect(`${config.frontendUrl}/login?error=no_code`);
   }
 
-  const googleUser = await getGoogleUserInfo(code, config.google.callbackUrl);
+  try {
+    const googleUser = await getGoogleUserInfo(code, config.google.callbackUrl);
 
-  let user = await User.findOne({ email: googleUser.email });
+    let user = await User.findOne({ email: googleUser.email });
 
-  if (!user) {
-    user = await User.create({
-      googleId: googleUser.googleId,
-      email: googleUser.email,
-      name: googleUser.name
+    if (!user) {
+      user = await User.create({
+        googleId: googleUser.googleId,
+        email: googleUser.email,
+        name: googleUser.name,
+        avatar: googleUser.avatar
+      });
+    } else if (!user.googleId) {
+      user.googleId = googleUser.googleId;
+      if (googleUser.avatar && !user.avatar) {
+        user.avatar = googleUser.avatar;
+      }
+      await user.save();
+    }
+
+    if (!user.isActive) {
+      return res.redirect(`${config.frontendUrl}/login?error=account_deactivated`);
+    }
+
+    sendTokenCookie(res, {
+      id: user._id,
+      accountType: 'user',
+      role: user.role
     });
-  } else if (!user.googleId) {
-    user.googleId = googleUser.googleId;
-    await user.save();
+
+    // Redirect based on user role
+    let redirectPath = '/dashboard';
+    if (user.role === 'admin') {
+      redirectPath = '/admin';
+    } else if (user.role === 'organisation') {
+      redirectPath = '/organisation';
+    }
+
+    res.redirect(`${config.frontendUrl}${redirectPath}`);
+  } catch (err) {
+    console.error('Google OAuth callback error:', err);
+    return res.redirect(`${config.frontendUrl}/login?error=oauth_failed`);
   }
-
-  if (!user.isActive) {
-    return res.redirect(`${config.frontendUrl}/login?error=account_deactivated`);
-  }
-
-  sendTokenCookie(res, {
-    id: user._id,
-    accountType: 'user',
-    role: user.role
-  });
-
-  // Redirect based on user role
-  const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
-  res.redirect(`${config.frontendUrl}${redirectPath}`);
 });
 
 /**
