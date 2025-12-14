@@ -13,6 +13,10 @@ const { uploadOrganisationImages } = require('../middleware/upload.middleware');
 
 // Public Routes - Anyone can view organisations
 router.get('/', organisationController.getAllOrganisations);
+
+// Protected Route - Get organisations where user is admin (must be before /:id)
+router.get('/my', auth, organisationController.getMyOrganisations);
+
 router.get('/:id', organisationController.getOrganisation);
 
 // Admin Only Routes - Only admins can create, update, or delete organisations

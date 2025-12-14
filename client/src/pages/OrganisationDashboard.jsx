@@ -111,7 +111,7 @@ function OrganisationDashboardContent() {
   const { t } = useTranslation();
   const { user, logout, loading: authLoading } = useAuth();
   const {
-    getOrganisations,
+    getMyOrganisations,
     updateOrganisation,
     getEvents,
     createEvent,
@@ -178,13 +178,11 @@ function OrganisationDashboardContent() {
     }
   }, [authLoading, user, navigate]);
 
-  // Fetch organisation
+  // Fetch organisation where user is admin
   const fetchOrganisation = useCallback(async () => {
     try {
-      const data = await getOrganisations({ limit: 100 });
-      const userOrg = data.data.organisations.find((org) =>
-        org.admins?.some((admin) => admin._id === user?._id || admin === user?._id)
-      );
+      const data = await getMyOrganisations();
+      const userOrg = data.data.organisations[0]; // Get the first organisation where user is admin
       if (userOrg) {
         setOrganisation(userOrg);
         setOrgFormData({
@@ -199,7 +197,7 @@ function OrganisationDashboardContent() {
     } catch (err) {
       console.error('Failed to fetch organisation:', err);
     }
-  }, [getOrganisations, user]);
+  }, [getMyOrganisations]);
 
   // Fetch events
   const fetchEvents = useCallback(async (page = 1, search = '') => {

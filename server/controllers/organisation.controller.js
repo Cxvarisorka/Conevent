@@ -327,10 +327,30 @@ const removeAdmin = catchAsync(async (req, res, next) => {
     });
 });
 
+/**
+ * Get organisations where the current user is an admin
+ * GET /api/organisations/my
+ */
+const getMyOrganisations = catchAsync(async (req, res, next) => {
+    const userId = req.user._id;
+
+    const organisations = await Organisation.find({ admins: userId })
+        .populate('admins', 'name email');
+
+    res.status(200).json({
+        status: "success",
+        results: organisations.length,
+        data: {
+            organisations
+        }
+    });
+});
+
 module.exports = {
     createOrganisation,
     getAllOrganisations,
     getOrganisation,
+    getMyOrganisations,
     updateOrganisation,
     deleteOrganisation,
     addAdmin,

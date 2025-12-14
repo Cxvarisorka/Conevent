@@ -98,6 +98,23 @@ export function AdminProvider({ children }) {
   }, [apiRequest]);
 
   /**
+   * Fetch organisations where the current user is an admin
+   */
+  const getMyOrganisations = useCallback(async () => {
+    setLoading(prev => ({ ...prev, organisations: true }));
+    setError(null);
+    try {
+      const data = await apiRequest('/organisations/my');
+      return data;
+    } catch (err) {
+      setError(err.message);
+      throw err;
+    } finally {
+      setLoading(prev => ({ ...prev, organisations: false }));
+    }
+  }, [apiRequest]);
+
+  /**
    * Get single organisation by ID
    * @param {string} id - Organisation ID
    */
@@ -428,6 +445,7 @@ export function AdminProvider({ children }) {
 
     // Organisation methods
     getOrganisations,
+    getMyOrganisations,
     getOrganisation,
     createOrganisation,
     updateOrganisation,

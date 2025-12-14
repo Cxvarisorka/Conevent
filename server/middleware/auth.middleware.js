@@ -126,8 +126,11 @@ const canManageEvent = async (req, res, next) => {
       });
     }
 
-    const isOrgAdmin = organisation.admins.some(
-      adminId => adminId.toString() === req.user._id.toString()
+    // Ensure admins array exists and check if user is admin
+    const adminsArray = organisation.admins || [];
+    const userId = req.user._id.toString();
+    const isOrgAdmin = adminsArray.some(
+      adminId => adminId && adminId.toString() === userId
     );
 
     if (!isOrgAdmin) {
