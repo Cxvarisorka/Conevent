@@ -38,8 +38,15 @@ const createApplication = catchAsync(async (req, res, next) => {
     }
 
     // Check if registration is still open
-    if (event.registrationEndDate && new Date(event.registrationEndDate) < new Date()) {
-        return next(new AppError('Registration deadline has passed', 400));
+    // Use end of day for deadline to be more forgiving with timezone differences
+    if (event.registrationEndDate) {
+        const deadline = new Date(event.registrationEndDate);
+        const endOfDeadlineDay = new Date(deadline);
+        endOfDeadlineDay.setHours(23, 59, 59, 999);
+
+        if (endOfDeadlineDay < new Date()) {
+            return next(new AppError('Registration deadline has passed', 400));
+        }
     }
 
     // Check daily application limit (prevent spam)
