@@ -105,14 +105,20 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
     role: user.role
   });
 
-  res.redirect(`${config.frontendUrl}/dashboard`);
+  // Redirect based on user role
+  const redirectPath = user.role === 'admin' ? '/admin' : '/dashboard';
+  res.redirect(`${config.frontendUrl}${redirectPath}`);
 });
 
 /**
  * Logout
  */
 exports.logout = (req, res) => {
-  res.clearCookie('token');
+  res.clearCookie('token', {
+    httpOnly: true,
+    secure: config.env === 'production',
+    sameSite: 'lax'
+  });
   res.json({
     success: true,
     message: 'Logged out successfully'

@@ -13,16 +13,23 @@ const connectDB = require('./config/database.config');
 const routes = require('./routes/index.routes');
 const { globalErrorHandler, notFoundHandler } = require('./middleware/error.middleware');
 const AppError = require('./utils/appError');
+const socketService = require('./services/socket.service');
 
 // Initialize Express app
 const app = express();
 const server = http.createServer(app);
-const io = new Server(server);
 
-// Initialize WebSocket
-io.on('connection', (socket) => {
-
+// Initialize Socket.io with CORS
+const io = new Server(server, {
+    cors: {
+        origin: config.frontendUrl,
+        methods: ['GET', 'POST'],
+        credentials: true,
+    },
 });
+
+// Initialize socket service
+socketService.initialize(io);
 
 // ============================================
 // Database Connection
@@ -79,11 +86,12 @@ app.use(globalErrorHandler);
 // ============================================
 const PORT = config.port;
 
-app.listen(PORT, () => {
+server.listen(PORT, () => {
   console.log('='.repeat(50));
   console.log(`🚀 Server running in ${config.env.toUpperCase()} mode`);
   console.log(`📡 Port: ${PORT}`);
   console.log(`🌐 API: http://localhost:${PORT}/api`);
+  console.log(`🔌 WebSocket: ws://localhost:${PORT}`);
   console.log(`❤️  Health: http://localhost:${PORT}/api/health`);
   console.log('='.repeat(50));
 });
