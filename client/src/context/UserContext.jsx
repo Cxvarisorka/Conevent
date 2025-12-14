@@ -69,9 +69,7 @@ export function UserProvider({ children }) {
     setLoading((prev) => ({ ...prev, events: true }));
     setError(null);
     try {
-      // Only show published events for users
-      const queryParams = { ...params, status: 'published' };
-      const queryString = new URLSearchParams(queryParams).toString();
+      const queryString = new URLSearchParams(params).toString();
       const data = await apiRequest(`/events?${queryString}`);
       return data;
     } catch (err) {
