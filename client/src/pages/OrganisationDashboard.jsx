@@ -70,12 +70,7 @@ import {
   ExternalLink,
 } from 'lucide-react';
 
-const ORGANISATION_TYPES = [
-  { value: 'university', label: 'University' },
-  { value: 'company', label: 'Company' },
-  { value: 'institution', label: 'Institution' },
-  { value: 'other', label: 'Other' },
-];
+// Organisation types moved inside component to use translations
 
 const formatDate = (date) => {
   if (!date) return '-';
@@ -336,11 +331,19 @@ function OrganisationDashboardContent() {
     navigate('/login');
   };
 
+  // Organisation types with translations
+  const ORGANISATION_TYPES = [
+    { value: 'university', label: t('organisations.types.university') },
+    { value: 'company', label: t('organisations.types.company') },
+    { value: 'institution', label: t('organisations.types.institution') },
+    { value: 'other', label: t('organisations.types.other') },
+  ];
+
   const navItems = [
-    { id: 'overview', label: 'Overview', icon: BarChart3 },
-    { id: 'events', label: 'Events', icon: Calendar },
-    { id: 'applications', label: 'Applications', icon: FileText },
-    { id: 'profile', label: 'Profile', icon: Building2 },
+    { id: 'overview', label: t('orgDashboard.overview'), icon: BarChart3 },
+    { id: 'events', label: t('tabs.events'), icon: Calendar },
+    { id: 'applications', label: t('tabs.applications'), icon: FileText },
+    { id: 'profile', label: t('orgDashboard.profile'), icon: Building2 },
   ];
 
   if (authLoading || !user) {
@@ -448,12 +451,12 @@ function OrganisationDashboardContent() {
               <span className="font-bold text-lg">Conevent</span>
             </div>
             <div className="hidden lg:block">
-              <h1 className="text-xl font-bold capitalize">{activeTab}</h1>
+              <h1 className="text-xl font-bold capitalize">{navItems.find(n => n.id === activeTab)?.label}</h1>
               <p className="text-sm text-muted-foreground">
-                {activeTab === 'overview' && 'Dashboard overview and statistics'}
-                {activeTab === 'events' && 'Manage your events'}
-                {activeTab === 'applications' && 'Review event applications'}
-                {activeTab === 'profile' && 'Update organisation profile'}
+                {activeTab === 'overview' && t('orgDashboard.overviewDescription')}
+                {activeTab === 'events' && t('orgDashboard.eventsDescription')}
+                {activeTab === 'applications' && t('orgDashboard.applicationsDescription')}
+                {activeTab === 'profile' && t('orgDashboard.profileDescription')}
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -479,7 +482,7 @@ function OrganisationDashboardContent() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Total Events</p>
+                        <p className="text-sm text-muted-foreground">{t('orgDashboard.totalEvents')}</p>
                         <p className="text-3xl font-bold">{stats.totalEvents}</p>
                       </div>
                       <div className="w-12 h-12 bg-violet-100 rounded-xl flex items-center justify-center">
@@ -492,7 +495,7 @@ function OrganisationDashboardContent() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Active Events</p>
+                        <p className="text-sm text-muted-foreground">{t('orgDashboard.activeEvents')}</p>
                         <p className="text-3xl font-bold text-green-600">{stats.activeEvents}</p>
                       </div>
                       <div className="w-12 h-12 bg-green-100 rounded-xl flex items-center justify-center">
@@ -505,7 +508,7 @@ function OrganisationDashboardContent() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Applications</p>
+                        <p className="text-sm text-muted-foreground">{t('tabs.applications')}</p>
                         <p className="text-3xl font-bold">{stats.totalApplications}</p>
                       </div>
                       <div className="w-12 h-12 bg-blue-100 rounded-xl flex items-center justify-center">
@@ -518,7 +521,7 @@ function OrganisationDashboardContent() {
                   <CardContent className="p-6">
                     <div className="flex items-center justify-between">
                       <div>
-                        <p className="text-sm text-muted-foreground">Pending</p>
+                        <p className="text-sm text-muted-foreground">{t('applications.statuses.pending')}</p>
                         <p className="text-3xl font-bold text-yellow-600">{stats.pendingApplications}</p>
                       </div>
                       <div className="w-12 h-12 bg-yellow-100 rounded-xl flex items-center justify-center">
@@ -533,20 +536,20 @@ function OrganisationDashboardContent() {
               <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
                 <Card className="border-0 shadow-sm">
                   <CardHeader>
-                    <CardTitle className="text-lg">Quick Actions</CardTitle>
+                    <CardTitle className="text-lg">{t('orgDashboard.quickActions')}</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-3">
                     <Button className="w-full justify-start gap-3 h-12 bg-gradient-to-r from-violet-600 to-purple-600" onClick={() => { setSelectedEvent(null); setEventFormOpen(true); }}>
                       <Plus className="w-5 h-5" />
-                      Create New Event
+                      {t('orgDashboard.createNewEvent')}
                     </Button>
                     <Button variant="outline" className="w-full justify-start gap-3 h-12" onClick={() => setActiveTab('applications')}>
                       <FileText className="w-5 h-5" />
-                      Review Applications ({stats.pendingApplications} pending)
+                      {t('orgDashboard.reviewApplications', { count: stats.pendingApplications })}
                     </Button>
                     <Button variant="outline" className="w-full justify-start gap-3 h-12" onClick={() => setActiveTab('profile')}>
                       <Settings className="w-5 h-5" />
-                      Update Profile
+                      {t('orgDashboard.updateProfile')}
                     </Button>
                   </CardContent>
                 </Card>
@@ -554,9 +557,9 @@ function OrganisationDashboardContent() {
                 {/* Recent Events */}
                 <Card className="border-0 shadow-sm">
                   <CardHeader className="flex flex-row items-center justify-between">
-                    <CardTitle className="text-lg">Recent Events</CardTitle>
+                    <CardTitle className="text-lg">{t('orgDashboard.recentEvents')}</CardTitle>
                     <Button variant="ghost" size="sm" onClick={() => setActiveTab('events')}>
-                      View All
+                      {t('common.view')} {t('common.all')}
                     </Button>
                   </CardHeader>
                   <CardContent>
@@ -569,11 +572,11 @@ function OrganisationDashboardContent() {
                           <p className="font-medium text-sm truncate">{event.title}</p>
                           <p className="text-xs text-muted-foreground">{formatDate(event.startDate)}</p>
                         </div>
-                        <Badge className={`${getStatusStyle(event.status)} border text-xs`}>{event.status}</Badge>
+                        <Badge className={`${getStatusStyle(event.status)} border text-xs`}>{t(`events.statuses.${event.status}`)}</Badge>
                       </div>
                     ))}
                     {events.length === 0 && (
-                      <p className="text-center text-muted-foreground py-8">No events yet</p>
+                      <p className="text-center text-muted-foreground py-8">{t('orgDashboard.noEventsYet')}</p>
                     )}
                   </CardContent>
                 </Card>
@@ -590,7 +593,7 @@ function OrganisationDashboardContent() {
                   <div className="relative flex-1">
                     <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
                     <Input
-                      placeholder="Search events..."
+                      placeholder={t('events.searchPlaceholder')}
                       value={searchQuery}
                       onChange={(e) => setSearchQuery(e.target.value)}
                       onKeyDown={(e) => e.key === 'Enter' && fetchEvents(1, searchQuery)}
@@ -600,7 +603,7 @@ function OrganisationDashboardContent() {
                 </div>
                 <Button className="bg-gradient-to-r from-violet-600 to-purple-600" onClick={() => { setSelectedEvent(null); setEventFormOpen(true); }}>
                   <Plus className="w-4 h-4 mr-2" />
-                  Create Event
+                  {t('events.createEvent')}
                 </Button>
               </div>
 
@@ -612,11 +615,11 @@ function OrganisationDashboardContent() {
               ) : events.length === 0 ? (
                 <div className="text-center py-16">
                   <Calendar className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="font-semibold text-lg mb-1">No events yet</h3>
-                  <p className="text-muted-foreground mb-4">Create your first event to get started</p>
+                  <h3 className="font-semibold text-lg mb-1">{t('orgDashboard.noEventsYet')}</h3>
+                  <p className="text-muted-foreground mb-4">{t('orgDashboard.createFirstEvent')}</p>
                   <Button className="bg-gradient-to-r from-violet-600 to-purple-600" onClick={() => { setSelectedEvent(null); setEventFormOpen(true); }}>
                     <Plus className="w-4 h-4 mr-2" />
-                    Create Event
+                    {t('events.createEvent')}
                   </Button>
                 </div>
               ) : (
@@ -629,7 +632,7 @@ function OrganisationDashboardContent() {
                         </div>
                         <div className="flex-1 p-4">
                           <div className="flex items-start justify-between mb-2">
-                            <Badge className={`${getStatusStyle(event.status)} border text-xs`}>{event.status}</Badge>
+                            <Badge className={`${getStatusStyle(event.status)} border text-xs`}>{t(`events.statuses.${event.status}`)}</Badge>
                             <Badge variant="outline" className="text-xs">{event.category}</Badge>
                           </div>
                           <h3 className="font-semibold mb-1 line-clamp-1">{event.title}</h3>
@@ -645,10 +648,10 @@ function OrganisationDashboardContent() {
                           </div>
                           <div className="flex gap-2">
                             <Button size="sm" variant="outline" className="h-8" onClick={() => { setSelectedEvent(event); setDetailDialogOpen(true); }}>
-                              <Eye className="w-3 h-3 mr-1" /> View
+                              <Eye className="w-3 h-3 mr-1" /> {t('common.view')}
                             </Button>
                             <Button size="sm" variant="outline" className="h-8" onClick={() => { setSelectedEvent(event); setEventFormOpen(true); }}>
-                              <Edit className="w-3 h-3 mr-1" /> Edit
+                              <Edit className="w-3 h-3 mr-1" /> {t('common.edit')}
                             </Button>
                             <Button size="sm" variant="outline" className="h-8 text-red-600 hover:text-red-700" onClick={() => { setSelectedEvent(event); setDeleteDialogOpen(true); }}>
                               <Trash2 className="w-3 h-3" />
@@ -667,7 +670,7 @@ function OrganisationDashboardContent() {
                   <Button variant="outline" size="sm" onClick={() => fetchEvents(pagination.page - 1, searchQuery)} disabled={pagination.page === 1}>
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
-                  <span className="flex items-center px-3 text-sm">Page {pagination.page} of {pagination.totalPages}</span>
+                  <span className="flex items-center px-3 text-sm">{t('common.page')} {pagination.page} {t('common.of')} {pagination.totalPages}</span>
                   <Button variant="outline" size="sm" onClick={() => fetchEvents(pagination.page + 1, searchQuery)} disabled={pagination.page === pagination.totalPages}>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -683,16 +686,16 @@ function OrganisationDashboardContent() {
               <div className="flex flex-wrap items-center gap-4">
                 <Select value={appFilterStatus} onValueChange={(v) => { setAppFilterStatus(v); fetchApplications(1, v); }}>
                   <SelectTrigger className="w-[180px]">
-                    <SelectValue placeholder="All Statuses" />
+                    <SelectValue placeholder={t('applications.statuses.all')} />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="all">All Statuses</SelectItem>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="accepted">Accepted</SelectItem>
-                    <SelectItem value="rejected">Rejected</SelectItem>
+                    <SelectItem value="all">{t('applications.statuses.all')}</SelectItem>
+                    <SelectItem value="pending">{t('applications.statuses.pending')}</SelectItem>
+                    <SelectItem value="accepted">{t('applications.statuses.accepted')}</SelectItem>
+                    <SelectItem value="rejected">{t('applications.statuses.rejected')}</SelectItem>
                   </SelectContent>
                 </Select>
-                <span className="text-sm text-muted-foreground">Total: {appPagination.total} applications</span>
+                <span className="text-sm text-muted-foreground">{t('applications.totalApplications', { count: appPagination.total })}</span>
               </div>
 
               {/* Applications List */}
@@ -703,8 +706,8 @@ function OrganisationDashboardContent() {
               ) : applications.length === 0 ? (
                 <div className="text-center py-16">
                   <FileText className="w-16 h-16 mx-auto mb-4 text-muted-foreground" />
-                  <h3 className="font-semibold text-lg mb-1">No applications yet</h3>
-                  <p className="text-muted-foreground">Applications will appear here when users apply to your events</p>
+                  <h3 className="font-semibold text-lg mb-1">{t('applications.noApplicationsYet')}</h3>
+                  <p className="text-muted-foreground">{t('orgDashboard.applicationsWillAppear')}</p>
                 </div>
               ) : (
                 <div className="space-y-4">
@@ -723,19 +726,19 @@ function OrganisationDashboardContent() {
                                 <p className="font-semibold">{app.userId?.name}</p>
                                 <p className="text-sm text-muted-foreground">{app.userId?.email}</p>
                               </div>
-                              <Badge className={`${getAppStatusStyle(app.status)} border`}>{app.status}</Badge>
+                              <Badge className={`${getAppStatusStyle(app.status)} border`}>{t(`applications.statuses.${app.status}`)}</Badge>
                             </div>
                             <div className="mt-2 p-3 bg-muted/50 rounded-lg">
                               <p className="text-sm font-medium">{app.eventId?.title}</p>
-                              <p className="text-xs text-muted-foreground">{formatDate(app.eventId?.startDate)} • Applied {formatDate(app.createdAt)}</p>
+                              <p className="text-xs text-muted-foreground">{formatDate(app.eventId?.startDate)} • {t('applications.applied')} {formatDate(app.createdAt)}</p>
                             </div>
                             {app.status === 'pending' && !app.eventId?.price && (
                               <div className="flex gap-2 mt-3">
                                 <Button size="sm" className="bg-green-600 hover:bg-green-700" onClick={() => { setSelectedApplication(app); setAppActionType('accept'); setAppActionDialogOpen(true); }}>
-                                  <Check className="w-4 h-4 mr-1" /> Accept
+                                  <Check className="w-4 h-4 mr-1" /> {t('applications.accept')}
                                 </Button>
                                 <Button size="sm" variant="outline" className="text-red-600 hover:text-red-700" onClick={() => { setSelectedApplication(app); setAppActionType('reject'); setRejectionReason(''); setAppActionDialogOpen(true); }}>
-                                  <X className="w-4 h-4 mr-1" /> Reject
+                                  <X className="w-4 h-4 mr-1" /> {t('applications.reject')}
                                 </Button>
                               </div>
                             )}
@@ -753,7 +756,7 @@ function OrganisationDashboardContent() {
                   <Button variant="outline" size="sm" onClick={() => fetchApplications(appPagination.page - 1, appFilterStatus)} disabled={appPagination.page === 1}>
                     <ChevronLeft className="w-4 h-4" />
                   </Button>
-                  <span className="flex items-center px-3 text-sm">Page {appPagination.page} of {appPagination.totalPages}</span>
+                  <span className="flex items-center px-3 text-sm">{t('common.page')} {appPagination.page} {t('common.of')} {appPagination.totalPages}</span>
                   <Button variant="outline" size="sm" onClick={() => fetchApplications(appPagination.page + 1, appFilterStatus)} disabled={appPagination.page === appPagination.totalPages}>
                     <ChevronRight className="w-4 h-4" />
                   </Button>
@@ -767,7 +770,7 @@ function OrganisationDashboardContent() {
             <div className="max-w-2xl space-y-6">
               <Card className="border-0 shadow-sm">
                 <CardHeader>
-                  <CardTitle>Organisation Profile</CardTitle>
+                  <CardTitle>{t('orgDashboard.organisationProfile')}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <form onSubmit={handleSaveOrganisation} className="space-y-6">
@@ -783,53 +786,53 @@ function OrganisationDashboardContent() {
                         <Label htmlFor="logo" className="cursor-pointer">
                           <div className="flex items-center gap-2 text-sm text-violet-600 hover:text-violet-700">
                             <Upload className="w-4 h-4" />
-                            Upload new logo
+                            {t('orgDashboard.uploadNewLogo')}
                           </div>
                         </Label>
                         <Input id="logo" type="file" accept="image/*" className="hidden" onChange={(e) => setLogo(e.target.files[0])} />
-                        <p className="text-xs text-muted-foreground mt-1">JPG, PNG up to 2MB</p>
+                        <p className="text-xs text-muted-foreground mt-1">{t('orgDashboard.logoFormat')}</p>
                       </div>
                     </div>
 
                     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                       <div className="space-y-2">
-                        <Label htmlFor="name">Organisation Name</Label>
+                        <Label htmlFor="name">{t('orgDashboard.organisationName')}</Label>
                         <Input id="name" name="name" value={orgFormData.name} onChange={handleOrgChange} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="type">Type</Label>
+                        <Label htmlFor="type">{t('common.type')}</Label>
                         <Select value={orgFormData.type} onValueChange={(v) => setOrgFormData((p) => ({ ...p, type: v }))}>
                           <SelectTrigger>
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent>
-                            {ORGANISATION_TYPES.map((t) => (
-                              <SelectItem key={t.value} value={t.value}>{t.label}</SelectItem>
+                            {ORGANISATION_TYPES.map((type) => (
+                              <SelectItem key={type.value} value={type.value}>{type.label}</SelectItem>
                             ))}
                           </SelectContent>
                         </Select>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
+                        <Label htmlFor="email">{t('common.email')}</Label>
                         <Input id="email" name="email" type="email" value={orgFormData.email} onChange={handleOrgChange} />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
+                        <Label htmlFor="phone">{t('common.phone')}</Label>
                         <Input id="phone" name="phone" value={orgFormData.phone} onChange={handleOrgChange} />
                       </div>
                       <div className="space-y-2 md:col-span-2">
-                        <Label htmlFor="website">Website</Label>
+                        <Label htmlFor="website">{t('common.website')}</Label>
                         <Input id="website" name="website" value={orgFormData.website} onChange={handleOrgChange} />
                       </div>
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="description">Description</Label>
+                      <Label htmlFor="description">{t('common.description')}</Label>
                       <Textarea id="description" name="description" value={orgFormData.description} onChange={handleOrgChange} rows={4} />
                     </div>
 
                     <Button type="submit" className="bg-gradient-to-r from-violet-600 to-purple-600" disabled={saving}>
-                      {saving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> Saving...</> : 'Save Changes'}
+                      {saving ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" /> {t('common.saving')}</> : t('orgDashboard.saveChanges')}
                     </Button>
                   </form>
                 </CardContent>
@@ -864,13 +867,13 @@ function OrganisationDashboardContent() {
       <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>Delete Event</DialogTitle>
-            <DialogDescription>Are you sure you want to delete "{selectedEvent?.title}"? This action cannot be undone.</DialogDescription>
+            <DialogTitle>{t('events.deleteEvent')}</DialogTitle>
+            <DialogDescription>{t('events.deleteEventConfirm', { title: selectedEvent?.title })}</DialogDescription>
           </DialogHeader>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setDeleteDialogOpen(false)}>{t('common.cancel')}</Button>
             <Button variant="destructive" onClick={handleDeleteConfirm} disabled={deleting}>
-              {deleting ? 'Deleting...' : 'Delete'}
+              {deleting ? t('common.deleting') : t('common.delete')}
             </Button>
           </DialogFooter>
         </DialogContent>
@@ -879,18 +882,20 @@ function OrganisationDashboardContent() {
       <Dialog open={appActionDialogOpen} onOpenChange={setAppActionDialogOpen}>
         <DialogContent>
           <DialogHeader>
-            <DialogTitle>{appActionType === 'accept' ? 'Accept' : 'Reject'} Application</DialogTitle>
+            <DialogTitle>{appActionType === 'accept' ? t('applications.acceptApplication') : t('applications.rejectApplication')}</DialogTitle>
             <DialogDescription>
-              {appActionType === 'accept' ? `Accept ${selectedApplication?.userId?.name}'s application?` : `Reject ${selectedApplication?.userId?.name}'s application?`}
+              {appActionType === 'accept'
+                ? t('applications.acceptConfirm', { name: selectedApplication?.userId?.name, event: selectedApplication?.eventId?.title })
+                : t('applications.rejectConfirm', { name: selectedApplication?.userId?.name })}
             </DialogDescription>
           </DialogHeader>
           {appActionType === 'reject' && (
-            <Textarea placeholder="Reason for rejection (optional)" value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} rows={3} />
+            <Textarea placeholder={t('applications.rejectionReason')} value={rejectionReason} onChange={(e) => setRejectionReason(e.target.value)} rows={3} />
           )}
           <DialogFooter>
-            <Button variant="outline" onClick={() => setAppActionDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setAppActionDialogOpen(false)}>{t('common.cancel')}</Button>
             <Button variant={appActionType === 'accept' ? 'default' : 'destructive'} onClick={handleAppActionConfirm} disabled={processingApp}>
-              {processingApp ? 'Processing...' : appActionType === 'accept' ? 'Accept' : 'Reject'}
+              {processingApp ? t('common.processing') : appActionType === 'accept' ? t('applications.accept') : t('applications.reject')}
             </Button>
           </DialogFooter>
         </DialogContent>

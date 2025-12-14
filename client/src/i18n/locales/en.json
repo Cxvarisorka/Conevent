@@ -184,7 +184,16 @@
     "metadata": "Metadata",
     "eventId": "Event ID",
     "created": "Created",
-    "lastUpdated": "Last Updated"
+    "lastUpdated": "Last Updated",
+    "time": "Time",
+    "aboutEvent": "About this event",
+    "registrationDeadline": "Registration deadline",
+    "spotsLeft": "{{spots}} spots left of {{total}}",
+    "eventCancelled": "Event Cancelled",
+    "eventEnded": "Event Ended",
+    "soldOut": "Sold Out",
+    "registrationClosed": "Registration Closed",
+    "register": "Register"
   },
   "organisations": {
     "title": "Organisations",
@@ -235,7 +244,15 @@
       "company": "Company",
       "institution": "Institution",
       "other": "Other"
-    }
+    },
+    "noDescription": "No description provided.",
+    "contactInformation": "Contact Information",
+    "socialMedia": "Social Media",
+    "about": "About",
+    "metadata": "Metadata",
+    "organisationId": "ID",
+    "created": "Created",
+    "lastUpdated": "Last Updated"
   },
   "applications": {
     "title": "My Applications",
@@ -306,10 +323,27 @@
   },
   "orgDashboard": {
     "title": "Organisation Dashboard",
-    "eventsTitle": "Your Events",
-    "eventsDescription": "Manage events for your organisation",
-    "applicationsTitle": "Applications",
-    "applicationsDescription": "Review applications for your events"
+    "overview": "Overview",
+    "profile": "Profile",
+    "overviewDescription": "Dashboard overview and statistics",
+    "eventsDescription": "Manage your events",
+    "applicationsDescription": "Review event applications",
+    "profileDescription": "Update organisation profile",
+    "totalEvents": "Total Events",
+    "activeEvents": "Active Events",
+    "quickActions": "Quick Actions",
+    "createNewEvent": "Create New Event",
+    "reviewApplications": "Review Applications ({{count}} pending)",
+    "updateProfile": "Update Profile",
+    "recentEvents": "Recent Events",
+    "noEventsYet": "No events yet",
+    "createFirstEvent": "Create your first event to get started",
+    "applicationsWillAppear": "Applications will appear here when users apply to your events",
+    "organisationProfile": "Organisation Profile",
+    "uploadNewLogo": "Upload new logo",
+    "logoFormat": "JPG, PNG up to 2MB",
+    "organisationName": "Organisation Name",
+    "saveChanges": "Save Changes"
   },
   "validation": {
     "nameRequired": "Name is required",

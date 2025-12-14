@@ -125,7 +125,7 @@ export default function OrganisationDetailDialog({
           {/* Description */}
           {organisation.description && (
             <div>
-              <h3 className="text-sm font-semibold mb-2">About</h3>
+              <h3 className="text-sm font-semibold mb-2">{t('organisations.about')}</h3>
               <p className="text-sm text-muted-foreground leading-relaxed">
                 {organisation.description}
               </p>
@@ -136,29 +136,29 @@ export default function OrganisationDetailDialog({
 
           {/* Contact Information */}
           <div>
-            <h3 className="text-sm font-semibold mb-3">Contact</h3>
+            <h3 className="text-sm font-semibold mb-3">{t('events.contact')}</h3>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <ContactItem
                 icon="📧"
-                label="Email"
+                label={t('common.email')}
                 value={organisation.email}
                 href={`mailto:${organisation.email}`}
               />
               <ContactItem
                 icon="📞"
-                label="Phone"
+                label={t('common.phone')}
                 value={organisation.phone}
                 href={`tel:${organisation.phone}`}
               />
               <ContactItem
                 icon="🌐"
-                label="Website"
+                label={t('common.website')}
                 value={organisation.website ? new URL(organisation.website).hostname : null}
                 href={organisation.website}
               />
               <ContactItem
                 icon="📍"
-                label="Address"
+                label={t('events.address')}
                 value={organisation.address}
               />
             </div>
@@ -170,7 +170,7 @@ export default function OrganisationDetailDialog({
               <>
                 <Separator />
                 <div>
-                  <h3 className="text-sm font-semibold mb-3">Social Media</h3>
+                  <h3 className="text-sm font-semibold mb-3">{t('organisations.socialMedia')}</h3>
                   <div className="flex flex-wrap gap-2">
                     {organisation.socialMedia?.linkedin && (
                       <Button variant="outline" size="sm" asChild>
@@ -228,7 +228,7 @@ export default function OrganisationDetailDialog({
               className="w-full"
               onClick={() => onOpenChange(false)}
             >
-              Close
+              {t('common.close')}
             </Button>
           </div>
         </div>
