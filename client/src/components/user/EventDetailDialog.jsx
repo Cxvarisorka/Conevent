@@ -75,8 +75,8 @@ const formatTime = (date) => {
 /**
  * Format price for display
  */
-const formatPrice = (price, currency = 'USD') => {
-  if (!price || price === 0) return 'Free';
+const formatPrice = (price, currency = 'USD', t) => {
+  if (!price || price === 0) return t ? t('common.free') : 'Free';
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: currency,
@@ -113,6 +113,8 @@ export default function EventDetailDialog({
   event,
   onParticipate,
 }) {
+  const { t } = useTranslation();
+
   if (!event) return null;
 
   const isRegistrationOpen = event.status === 'published' &&
@@ -163,36 +165,36 @@ export default function EventDetailDialog({
           <div className="grid grid-cols-2 gap-4">
             <InfoItem
               icon="📅"
-              label="Date"
+              label={t('common.date')}
               value={formatDate(event.startDate)}
             />
             <InfoItem
               icon="⏰"
-              label="Time"
+              label={t('events.time')}
               value={`${formatTime(event.startDate)}${event.endDate ? ` - ${formatTime(event.endDate)}` : ''}`}
             />
             <InfoItem
               icon="📍"
-              label="Location"
+              label={t('events.location')}
               value={event.location || event.venue}
             />
             <InfoItem
               icon="💰"
-              label="Price"
-              value={formatPrice(event.price, event.currency)}
+              label={t('common.price')}
+              value={formatPrice(event.price, event.currency, t)}
             />
             {event.capacity && (
               <InfoItem
                 icon="👥"
-                label="Capacity"
-                value={`${spotsAvailable} spots left of ${event.capacity}`}
+                label={t('common.capacity')}
+                value={t('events.spotsLeft', { spots: spotsAvailable, total: event.capacity })}
               />
             )}
             {event.eventType && (
               <InfoItem
                 icon="🎯"
-                label="Type"
-                value={event.eventType}
+                label={t('common.type')}
+                value={t(`events.types.${event.eventType}`)}
               />
             )}
           </div>
@@ -201,9 +203,9 @@ export default function EventDetailDialog({
 
           {/* Description */}
           <div>
-            <h3 className="text-sm font-semibold mb-2">About this event</h3>
+            <h3 className="text-sm font-semibold mb-2">{t('events.aboutEvent')}</h3>
             <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
-              {event.description || 'No description provided.'}
+              {event.description || t('events.noDescription')}
             </p>
           </div>
 
@@ -213,7 +215,7 @@ export default function EventDetailDialog({
               <Separator />
               <div className="flex items-center gap-2 text-sm">
                 <span className="text-amber-500">⚠️</span>
-                <span>Registration deadline: {formatDate(event.registrationDeadline)}</span>
+                <span>{t('events.registrationDeadline')}: {formatDate(event.registrationDeadline)}</span>
               </div>
             </>
           )}
@@ -223,7 +225,7 @@ export default function EventDetailDialog({
             <>
               <Separator />
               <div>
-                <h3 className="text-sm font-semibold mb-2">Tags</h3>
+                <h3 className="text-sm font-semibold mb-2">{t('events.tags')}</h3>
                 <div className="flex flex-wrap gap-2">
                   {event.tags.map((tag, index) => (
                     <Badge key={index} variant="secondary">
@@ -244,7 +246,7 @@ export default function EventDetailDialog({
               className="flex-1"
               onClick={() => onOpenChange(false)}
             >
-              Close
+              {t('common.close')}
             </Button>
             <Button
               className="flex-1"
@@ -252,16 +254,16 @@ export default function EventDetailDialog({
               disabled={!isRegistrationOpen || (spotsAvailable !== null && spotsAvailable <= 0)}
             >
               {event.status === 'cancelled'
-                ? 'Event Cancelled'
+                ? t('events.eventCancelled')
                 : event.status === 'completed'
-                ? 'Event Ended'
+                ? t('events.eventEnded')
                 : spotsAvailable !== null && spotsAvailable <= 0
-                ? 'Sold Out'
+                ? t('events.soldOut')
                 : !isRegistrationOpen
-                ? 'Registration Closed'
+                ? t('events.registrationClosed')
                 : event.price && event.price > 0
-                ? `Register - ${formatPrice(event.price, event.currency)}`
-                : 'Participate - Free'}
+                ? `${t('events.register')} - ${formatPrice(event.price, event.currency, t)}`
+                : `${t('events.participate')} - ${t('common.free')}`}
             </Button>
           </div>
         </div>

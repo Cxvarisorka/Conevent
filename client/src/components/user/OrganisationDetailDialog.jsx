@@ -85,6 +85,8 @@ export default function OrganisationDetailDialog({
   onOpenChange,
   organisation,
 }) {
+  const { t } = useTranslation();
+
   if (!organisation) return null;
 
   return (
