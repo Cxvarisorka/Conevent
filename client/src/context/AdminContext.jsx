@@ -277,11 +277,6 @@ export function AdminProvider({ children }) {
     setLoading(prev => ({ ...prev, events: true }));
     setError(null);
     try {
-      // Debug: log FormData contents
-      console.log('Creating event with FormData:');
-      for (let [key, value] of formData.entries()) {
-        console.log(`  ${key}:`, value instanceof File ? `File(${value.name}, ${value.size} bytes)` : value);
-      }
       const data = await apiRequestFormData('/events', formData);
       return data;
     } catch (err) {
