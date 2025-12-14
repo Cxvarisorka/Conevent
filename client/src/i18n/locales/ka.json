@@ -357,6 +357,7 @@
     "registrationEndDateRequired": "რეგისტრაციის დასრულების თარიღი სავალდებულოა",
     "endDateAfterStart": "დასრულების თარიღი უნდა იყოს დაწყების თარიღის შემდეგ",
     "registrationBeforeStart": "რეგისტრაცია უნდა დასრულდეს ღონისძიების დაწყებამდე",
+    "registrationMustBeFuture": "რეგისტრაციის დასრულების თარიღი უნდა იყოს მომავალში",
     "capacityMin": "ტევადობა უნდა იყოს მინიმუმ {{min}}"
   },
   "filters": {

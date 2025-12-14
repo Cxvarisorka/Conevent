@@ -167,6 +167,11 @@ eventSchema.pre('save', function(next) {
         return next(new Error('Registration must end before event starts'));
     }
 
+    // Ensure registration end date is in the future (only for new events)
+    if (this.isNew && new Date(this.registrationEndDate) < new Date()) {
+        return next(new Error('Registration end date must be in the future'));
+    }
+
     next();
 });
 
