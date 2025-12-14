@@ -136,9 +136,10 @@ export default function EventCard({ event, onClick }) {
       {/* Image Section */}
       <div className="relative aspect-[16/9] overflow-hidden">
         <img
-          src={event.coverImage || DEFAULT_EVENT_IMAGE}
+          src={event.coverImage && event.coverImage.trim() !== '' ? event.coverImage : DEFAULT_EVENT_IMAGE}
           alt={event.title}
           className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
+          onError={(e) => { e.target.src = DEFAULT_EVENT_IMAGE; }}
         />
 
         {/* Gradient Overlay */}
