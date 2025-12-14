@@ -38,7 +38,7 @@ const createApplication = catchAsync(async (req, res, next) => {
     }
 
     // Check if registration is still open
-    if (event.registrationDeadline && new Date(event.registrationDeadline) < new Date()) {
+    if (event.registrationEndDate && new Date(event.registrationEndDate) < new Date()) {
         return next(new AppError('Registration deadline has passed', 400));
     }
 

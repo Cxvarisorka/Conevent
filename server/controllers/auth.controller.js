@@ -116,8 +116,8 @@ exports.googleCallback = catchAsync(async (req, res, next) => {
 exports.logout = (req, res) => {
   res.clearCookie('token', {
     httpOnly: true,
-    secure: config.env === 'production',
-    sameSite: 'lax'
+    secure: true,
+    sameSite: 'none'
   });
   res.json({
     success: true,

@@ -10,8 +10,8 @@ const sendTokenCookie = (res, tokenPayload) => {
   res.cookie('token', token, {
     httpOnly: true,
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days
-    secure: config.env === 'production',
-    sameSite: 'lax'
+    secure: true,
+    sameSite: 'none'
   });
 
   return token;
