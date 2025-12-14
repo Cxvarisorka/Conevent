@@ -285,12 +285,6 @@ export default function EventForm({
         newErrors.registrationEndDate = t('validation.registrationBeforeStart');
       }
     }
-    // Validate registration end date is in the future (only for new events)
-    if (formData.registrationEndDate && !isEditing) {
-      if (new Date(formData.registrationEndDate) < new Date()) {
-        newErrors.registrationEndDate = t('validation.registrationMustBeFuture');
-      }
-    }
     if (formData.capacity < 5) {
       newErrors.capacity = t('validation.capacityMin', { min: 5 });
     }
