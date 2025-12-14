@@ -65,7 +65,17 @@ export function AdminProvider({ children }) {
       body: formData,
     });
 
-    const data = await response.json();
+    // Handle non-JSON responses
+    const contentType = response.headers.get('content-type');
+    let data;
+
+    if (contentType && contentType.includes('application/json')) {
+      data = await response.json();
+    } else {
+      const text = await response.text();
+      console.error('Non-JSON response:', text);
+      throw new Error(`Server error: ${response.status}`);
+    }
 
     if (!response.ok) {
       throw new Error(data.message || 'Request failed');

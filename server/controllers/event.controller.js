@@ -38,17 +38,22 @@ const createEvent = catchAsync(async (req, res, next) => {
     let imageUrls = [];
 
     if (req.files) {
-        // Upload cover image if provided
-        if (req.files.coverImage && req.files.coverImage[0]) {
-            coverImageUrl = await uploadToCloudinary(req.files.coverImage[0].buffer, 'conevent/events');
-        }
+        try {
+            // Upload cover image if provided
+            if (req.files.coverImage && req.files.coverImage[0]) {
+                coverImageUrl = await uploadToCloudinary(req.files.coverImage[0].buffer, 'conevent/events');
+            }
 
-        // Upload multiple images if provided
-        if (req.files.images && req.files.images.length > 0) {
-            const uploadPromises = req.files.images.map(file =>
-                uploadToCloudinary(file.buffer, 'conevent/events')
-            );
-            imageUrls = await Promise.all(uploadPromises);
+            // Upload multiple images if provided
+            if (req.files.images && req.files.images.length > 0) {
+                const uploadPromises = req.files.images.map(file =>
+                    uploadToCloudinary(file.buffer, 'conevent/events')
+                );
+                imageUrls = await Promise.all(uploadPromises);
+            }
+        } catch (uploadError) {
+            console.error('Cloudinary upload error:', uploadError);
+            return next(new AppError('Failed to upload images. Please try again.', 500));
         }
     }
 
