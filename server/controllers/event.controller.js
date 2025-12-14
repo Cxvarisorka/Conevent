@@ -37,11 +37,15 @@ const createEvent = catchAsync(async (req, res, next) => {
     let coverImageUrl = null;
     let imageUrls = [];
 
+    console.log('req.files:', req.files);
+    console.log('req.files.coverImage:', req.files?.coverImage);
+
     if (req.files) {
         try {
             // Upload cover image if provided
             if (req.files.coverImage && req.files.coverImage[0]) {
                 coverImageUrl = await uploadToCloudinary(req.files.coverImage[0].buffer, 'conevent/events');
+                console.log('Uploaded coverImage URL:', coverImageUrl);
             }
 
             // Upload multiple images if provided
@@ -56,6 +60,8 @@ const createEvent = catchAsync(async (req, res, next) => {
             return next(new AppError('Failed to upload images. Please try again.', 500));
         }
     }
+
+    console.log('Creating event with coverImage:', coverImageUrl);
 
     // Create event
     const event = await Event.create({
