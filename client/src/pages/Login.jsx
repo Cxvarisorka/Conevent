@@ -86,7 +86,7 @@ export default function Login() {
             <div className="w-10 h-10 bg-white/20 backdrop-blur-sm rounded-xl flex items-center justify-center">
               <Calendar className="w-6 h-6 text-white" />
             </div>
-            <span className="text-2xl font-bold text-white">Conevent</span>
+            <span className="text-2xl font-bold text-white">EventHub</span>
           </div>
           <p className="text-white/70 text-sm">Your gateway to amazing events</p>
         </div>
@@ -122,7 +122,7 @@ export default function Login() {
         {/* Testimonial */}
         <div className="relative z-10 bg-white/10 backdrop-blur-sm rounded-2xl p-6 max-w-md">
           <p className="text-white/90 italic mb-4">
-            "Conevent has transformed how we discover and participate in university events. It's incredibly intuitive!"
+            "EventHub has transformed how we discover and participate in university events. It's incredibly intuitive!"
           </p>
           <div className="flex items-center gap-3">
             <div className="w-10 h-10 bg-gradient-to-br from-pink-400 to-purple-500 rounded-full flex items-center justify-center text-white font-semibold">
@@ -151,7 +151,7 @@ export default function Login() {
                 <Calendar className="w-6 h-6 text-white" />
               </div>
               <span className="text-2xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                Conevent
+                EventHub
               </span>
             </div>
           </div>

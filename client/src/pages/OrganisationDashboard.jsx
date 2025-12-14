@@ -371,7 +371,7 @@ function OrganisationDashboardContent() {
             </div>
             {!sidebarCollapsed && (
               <span className="text-xl font-bold bg-gradient-to-r from-violet-600 to-purple-600 bg-clip-text text-transparent">
-                Conevent
+                EventHub
               </span>
             )}
           </div>
@@ -448,7 +448,7 @@ function OrganisationDashboardContent() {
               <div className="w-8 h-8 bg-gradient-to-br from-violet-600 to-purple-600 rounded-lg flex items-center justify-center">
                 <Building2 className="w-4 h-4 text-white" />
               </div>
-              <span className="font-bold text-lg">Conevent</span>
+              <span className="font-bold text-lg">EventHub</span>
             </div>
             <div className="hidden lg:block">
               <h1 className="text-xl font-bold capitalize">{navItems.find(n => n.id === activeTab)?.label}</h1>

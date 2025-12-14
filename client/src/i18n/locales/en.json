@@ -74,9 +74,9 @@
     "namePlaceholder": "John Doe"
   },
   "dashboard": {
-    "title": "Conevent",
+    "title": "EventHub",
     "subtitle": "Discover amazing events",
-    "footer": "Conevent - Discover and attend amazing events"
+    "footer": "EventHub - Discover and attend amazing events"
   },
   "tabs": {
     "events": "Events",
