@@ -273,7 +273,11 @@ function OrganisationDashboardContent() {
 
   const handleEventSubmit = async (formData) => {
     try {
-      if (!selectedEvent) formData.append('organisationId', organisation._id);
+      // Set organisationId for new events (delete first to avoid duplicates, then set)
+      if (!selectedEvent) {
+        formData.delete('organisationId');
+        formData.append('organisationId', organisation._id);
+      }
       if (selectedEvent) {
         await updateEvent(selectedEvent._id, formData);
         toast.success('Event updated successfully');
