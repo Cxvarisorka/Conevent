@@ -103,6 +103,7 @@
     "eventStatus": "Status",
     "startDate": "Start Date",
     "endDate": "End Date",
+    "registrationEndDate": "Registration End Date",
     "city": "City",
     "address": "Address",
     "onlineLink": "Online Meeting Link",
@@ -319,7 +320,9 @@
     "organisationRequired": "Organisation is required",
     "startDateRequired": "Start date is required",
     "endDateRequired": "End date is required",
+    "registrationEndDateRequired": "Registration end date is required",
     "endDateAfterStart": "End date must be after start date",
+    "registrationBeforeStart": "Registration must end before event starts",
     "capacityMin": "Capacity must be at least {{min}}"
   },
   "filters": {

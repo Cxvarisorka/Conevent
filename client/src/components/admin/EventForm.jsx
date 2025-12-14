@@ -84,6 +84,7 @@ export default function EventForm({
     status: 'draft',
     startDate: '',
     endDate: '',
+    registrationEndDate: '',
     capacity: 50,
     isFree: true,
     price: 0,
@@ -115,6 +116,7 @@ export default function EventForm({
         status: event.status || 'draft',
         startDate: formatDateForInput(event.startDate),
         endDate: formatDateForInput(event.endDate),
+        registrationEndDate: formatDateForInput(event.registrationEndDate),
         capacity: event.capacity || 50,
         isFree: event.isFree !== false,
         price: event.price || 0,
@@ -136,6 +138,7 @@ export default function EventForm({
         status: 'draft',
         startDate: '',
         endDate: '',
+        registrationEndDate: '',
         capacity: 50,
         isFree: true,
         price: 0,
@@ -269,9 +272,17 @@ export default function EventForm({
     if (!formData.endDate) {
       newErrors.endDate = t('validation.endDateRequired');
     }
+    if (!formData.registrationEndDate) {
+      newErrors.registrationEndDate = t('validation.registrationEndDateRequired');
+    }
     if (formData.startDate && formData.endDate) {
       if (new Date(formData.endDate) <= new Date(formData.startDate)) {
         newErrors.endDate = t('validation.endDateAfterStart');
+      }
+    }
+    if (formData.registrationEndDate && formData.startDate) {
+      if (new Date(formData.registrationEndDate) >= new Date(formData.startDate)) {
+        newErrors.registrationEndDate = t('validation.registrationBeforeStart');
       }
     }
     if (formData.capacity < 5) {
@@ -454,6 +465,21 @@ export default function EventForm({
                 <p className="text-sm text-red-500">{errors.endDate}</p>
               )}
             </div>
+          </div>
+
+          {/* Registration End Date */}
+          <div className="space-y-2">
+            <Label htmlFor="registrationEndDate">{t('events.registrationEndDate')} *</Label>
+            <Input
+              id="registrationEndDate"
+              name="registrationEndDate"
+              type="datetime-local"
+              value={formData.registrationEndDate}
+              onChange={handleChange}
+            />
+            {errors.registrationEndDate && (
+              <p className="text-sm text-red-500">{errors.registrationEndDate}</p>
+            )}
           </div>
 
           {/* Location Fields (for offline/hybrid events) */}

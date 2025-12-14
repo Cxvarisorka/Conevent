@@ -9,7 +9,8 @@ router.get('/', eventController.getAllEvents);
 router.get('/:id', eventController.getEvent);
 
 // Protected Routes - Admins and organisation admins can create, update, delete events
-router.post('/', auth, canManageEvent, uploadEventImages, eventController.createEvent);
+// Note: uploadEventImages must come before canManageEvent to parse FormData first
+router.post('/', auth, uploadEventImages, canManageEvent, eventController.createEvent);
 router.put('/:id', auth, canManageEvent, eventController.updateEvent);
 router.delete('/:id', auth, canManageEvent, eventController.deleteEvent);
 

@@ -103,6 +103,7 @@
     "eventStatus": "სტატუსი",
     "startDate": "დაწყების თარიღი",
     "endDate": "დასრულების თარიღი",
+    "registrationEndDate": "რეგისტრაციის დასრულების თარიღი",
     "city": "ქალაქი",
     "address": "მისამართი",
     "onlineLink": "ონლაინ შეხვედრის ბმული",
@@ -297,7 +298,9 @@
     "organisationRequired": "ორგანიზაცია სავალდებულოა",
     "startDateRequired": "დაწყების თარიღი სავალდებულოა",
     "endDateRequired": "დასრულების თარიღი სავალდებულოა",
+    "registrationEndDateRequired": "რეგისტრაციის დასრულების თარიღი სავალდებულოა",
     "endDateAfterStart": "დასრულების თარიღი უნდა იყოს დაწყების თარიღის შემდეგ",
+    "registrationBeforeStart": "რეგისტრაცია უნდა დასრულდეს ღონისძიების დაწყებამდე",
     "capacityMin": "ტევადობა უნდა იყოს მინიმუმ {{min}}"
   },
   "filters": {
