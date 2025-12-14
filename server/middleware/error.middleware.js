@@ -57,6 +57,13 @@ const handleMulterError = (err) => {
 };
 
 /**
+ * Handle JSON Syntax Error
+ */
+const handleJSONError = () => {
+  return new AppError('Invalid JSON format in request body', 400);
+};
+
+/**
  * Send Error Response in Development Mode
  */
 const sendErrorDev = (err, res) => {
@@ -138,6 +145,10 @@ const globalErrorHandler = (err, req, res, next) => {
     // Handle Multer Errors
     if (err.name === 'MulterError') {
       error = handleMulterError(err);
+    }
+    // Handle JSON Syntax Errors
+    if (err.type === 'entity.parse.failed' || err instanceof SyntaxError) {
+      error = handleJSONError();
     }
 
     sendErrorProd(error, res);

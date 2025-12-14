@@ -22,17 +22,35 @@ const upload = multer({
   }
 });
 
+// Wrapper to handle multer errors properly
+const handleUpload = (uploadMiddleware) => {
+  return (req, res, next) => {
+    uploadMiddleware(req, res, (err) => {
+      if (err) {
+        if (err instanceof multer.MulterError) {
+          if (err.code === 'LIMIT_FILE_SIZE') {
+            return next(new AppError('File size too large. Maximum size is 5MB', 400));
+          }
+          return next(new AppError(err.message, 400));
+        }
+        return next(err);
+      }
+      next();
+    });
+  };
+};
+
 // Middleware for uploading organisation images (logo and cover)
-exports.uploadOrganisationImages = upload.fields([
+exports.uploadOrganisationImages = handleUpload(upload.fields([
   { name: 'logo', maxCount: 1 },
   { name: 'coverImage', maxCount: 1 }
-]);
+]));
 
 // Middleware for uploading event images
-exports.uploadEventImages = upload.fields([
+exports.uploadEventImages = handleUpload(upload.fields([
   { name: 'coverImage', maxCount: 1 },
   { name: 'images', maxCount: 5 }
-]);
+]));
 
 // Single image upload
-exports.uploadSingle = (fieldName) => upload.single(fieldName);
+exports.uploadSingle = (fieldName) => handleUpload(upload.single(fieldName));
