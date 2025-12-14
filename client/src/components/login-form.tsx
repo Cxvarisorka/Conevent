@@ -10,6 +10,7 @@ import {
 import { Input } from "@/components/ui/input";
 import { useState } from "react";
 import { loginConstant } from "@/constants";
+import axios from "axios";
 
 export function LoginForm({
   className,
@@ -23,9 +24,26 @@ export function LoginForm({
     password: "",
   });
   // ! AUTH
-  const handleLogin = () => {
-    console.log(userInfo)
-  };
+async function handleLogin(e: React.FormEvent<HTMLFormElement>) {
+  e.preventDefault(); // ⛔ stop browser refresh
+
+  try {
+    await axios.post(
+      "http://localhost:3000/api/auth/login",
+      {
+        email: userInfo.email,
+        password: userInfo.password,
+      },
+      {
+        withCredentials: true,
+      }
+    );
+
+    window.location.reload(); // ✅ after success
+  } catch (error) {
+    console.error("Login failed", error);
+  }
+}
   return (
     <div className="flex items-center justify-center h-screen max-w-130  mx-auto ">
       <div className={cn("flex flex-col gap-6 w-full", className)} {...props}>
@@ -34,7 +52,9 @@ export function LoginForm({
             <form className="p-6 md:p-8">
               <FieldGroup>
                 <div className="flex flex-col items-center gap-2 text-center">
-                  <h1 className="text-2xl font-bold">{loginConstant.heading1}</h1>
+                  <h1 className="text-2xl font-bold">
+                    {loginConstant.heading1}
+                  </h1>
                 </div>
                 <Field>
                   <Input
@@ -53,7 +73,7 @@ export function LoginForm({
                 </Field>
                 <Field>
                   <Input
-                    value={userInfo.email}
+                    value={userInfo.password}
                     onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                       setUserInfo({
                         ...userInfo,
@@ -67,7 +87,7 @@ export function LoginForm({
                   />
                 </Field>
                 <Field>
-                  <Button onClick={() => handleLogin()} type="submit">
+                  <Button onClick={(e) => handleLogin(e)} type="submit">
                     {loginConstant.logIn}
                   </Button>
                 </Field>
@@ -86,7 +106,8 @@ export function LoginForm({
                   </Button>
                 </Field>
                 <FieldDescription className="text-center">
-                  {loginConstant.signUpIntro} <a href="/register">{loginConstant.signUp}</a>
+                  {loginConstant.signUpIntro}{" "}
+                  <a href="/register">{loginConstant.signUp}</a>
                 </FieldDescription>
               </FieldGroup>
             </form>

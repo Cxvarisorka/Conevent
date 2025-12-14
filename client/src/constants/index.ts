@@ -9,6 +9,7 @@ export const loginConstant = {
 };
 
 export const registerConstant = {
+  name: "სახელი",
   heading1: "რეგისტრაცია",
   email: "მეილი",
   passwd: "პაროლი",
@@ -18,4 +19,3 @@ export const registerConstant = {
   signInIntro: "უკვე გაქვს ანგარიში?",
   signIn: "შესვლა",
 };
-

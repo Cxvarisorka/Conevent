@@ -1,12 +1,32 @@
+import axios from "axios";
 import { NavUser } from "./nav-user";
+import { useEffect, useState } from "react";
 
-const data = {
+type User = {
+  status: boolean;
   user: {
-    name: "shadcn",
-    email: "m@example.com",
-    avatar: "/avatars/shadcn.jpg",
-  },
+    name: string;
+    email: string;
+    avatar: string;
+  };
 };
+
 export function AppUser() {
-  return <NavUser user={data.user} />;
+  const [user, setUser] = useState<User | null>(null);
+
+  useEffect(() => {
+    axios
+      .get("http://localhost:3000/api/auth/me", {
+        withCredentials: true,
+      })
+      .then((res) => {
+        setUser(res.data);
+      })
+      .catch(() => {
+        setUser(null);
+      });
+  }, []);
+  if (!user) return null; // or loading / skeleton
+
+  return <NavUser user={user?.user} />;
 }
